@@ -147,6 +147,7 @@ pipeline {
       steps {
         script {
           examples {
+            scriptDir = './scripts'
             examplesDir = "./examples"
           }
         }

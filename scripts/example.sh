@@ -21,7 +21,7 @@ go() {
   WHICH="$1"
   echo "$2 ${WHICH}..."
   THIS="${CONN}.${WHICH}"
-  mkdir -p /tmp/workspace/$BUILD_NUMBER/artifacts /tmp/workspace/$BUILD_NUMBER/record /tmp/$BUILD_NUMBER/artifacts
+  mkdir -p /tmp/workspace/$BUILD_NUMBER/artifacts /tmp/workspace/$BUILD_NUMBER/record /tmp/artifacts/$BUILD_NUMBER
   THIS_ART="/tmp/artifacts/${BUILD_NUMBER}/${THIS}"
   touch "${THIS_ART}"
   ./one.sh clean "${WHICH}" >>"${THIS_ART}"

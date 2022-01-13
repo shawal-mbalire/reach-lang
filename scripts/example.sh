@@ -31,7 +31,7 @@ go() {
     # inhibits docker-compose run. I am worried that this will be ineffective
     # at stopping the containers
     # ^ XXX it actually doesn't enforce things properly for tut-7-rpc
-    timeout --foreground "${TIMEOUT}" ./one.sh run "${WHICH}" >>"${THIS_ART}" 2>&1
+    timeout --foreground "${TIMEOUT}" ./one.sh run "${WHICH}" #>>"${THIS_ART}" 2>&1
     EXIT=$?
     if [ $EXIT -eq 124 ] ; then
       echo "$WHICH timed out!"

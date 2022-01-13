@@ -21,8 +21,8 @@ go() {
   WHICH="$1"
   echo "$2 ${WHICH}..."
   THIS="${CONN}.${WHICH}"
-  mkdir -p /tmp/workspace/artifacts /tmp/workspace/record /tmp/artifacts
-  THIS_ART="/tmp/artifacts/${THIS}"
+  mkdir -p /tmp/workspace/$BUILD_NUMBER/artifacts /tmp/workspace/$BUILD_NUMBER/record /tmp/$BUILD_NUMBER/artifacts
+  THIS_ART="/tmp/artifacts/${BUILD_NUMBER}/${THIS}"
   touch "${THIS_ART}"
   ./one.sh clean "${WHICH}" >>"${THIS_ART}"
   STATUS="fail"
@@ -47,7 +47,7 @@ go() {
   fi
   gzip "${THIS_ART}"
   rm -f "${THIS_ART}"
-  echo "[ \"${STATUS}\", \"${CONN}.${RANK}\" ]" >/tmp/workspace/record/"${THIS}"
+  echo "[ \"${STATUS}\", \"${CONN}.${RANK}\" ]" >/tmp/workspace/$BUILD_NUMBER/record/"${THIS}"
 }
 
 EXS="$(find . -maxdepth 1 -type d | sed 'sX./XX' | sort | tail -n +2 | awk "NR % ${SIZE} == ${RANK}")"

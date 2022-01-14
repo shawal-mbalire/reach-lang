@@ -85,26 +85,12 @@ pipeline {
         }
       }
     }
-    stage('Build stdlib and Runner Docker Image') {
-      parallel {
-        stage('Build stdlib') {
-          steps {
-            script {
-              imageBuild {
-                scriptDir = './scripts'
-                imageName = 'stdlib'
-              }
-            }
-          }
-        }
-        stage('Build Runner') {
-          steps {
-            script {
-              imageBuild {
-                scriptDir = './scripts'
-                imageName = 'runner'
-              }
-            }
+    stage('Build stdlib') {
+      steps {
+        script {
+          imageBuild {
+            scriptDir = './scripts'
+            imageName = 'stdlib'
           }
         }
       }

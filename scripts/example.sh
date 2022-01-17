@@ -24,9 +24,9 @@ go() {
   mkdir -p /tmp/workspace/$BUILD_NUMBER/artifacts /tmp/workspace/$BUILD_NUMBER/record /tmp/artifacts/$BUILD_NUMBER
   THIS_ART="/tmp/artifacts/${BUILD_NUMBER}/${THIS}"
   touch "${THIS_ART}"
-  ./one.sh clean "${WHICH}" >>"${THIS_ART}"
+  ./one.sh clean "${WHICH}" #>>"${THIS_ART}"
   STATUS="fail"
-  if ./one.sh build "${WHICH}" >>"${THIS_ART}" 2>&1 ; then
+  if ./one.sh build "${WHICH}" ; then # >>"${THIS_ART}" 2>&1 ; then
     # We are using foreground to get around the lack of TTY allocation that
     # inhibits docker-compose run. I am worried that this will be ineffective
     # at stopping the containers

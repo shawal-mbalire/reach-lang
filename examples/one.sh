@@ -1,5 +1,6 @@
 #!/bin/sh
 set -e
+set -x
 
 MODE="$1"
 e="$2"

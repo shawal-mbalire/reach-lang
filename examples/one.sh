@@ -17,7 +17,7 @@ has_target() {
 echo "$MODE $e"
 echo
 (
-  cd "$e" || exit 1
+  cd "$e" || (echo "ERROR 1"; exit 1)
   if [ -f Makefile ] && has_target ; then
     make REACH=../../reach "$MODE"
   else
@@ -27,6 +27,7 @@ echo
         ../../reach compile
         ;;
       run)
+        echo "ITS RUNNING!!!"
         ../../reach run
         ;;
       down)
@@ -41,4 +42,4 @@ echo
         ;;
     esac
   fi
-) || exit 1
+) || (echo "ERROR 2"; exit 1)

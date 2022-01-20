@@ -30,6 +30,8 @@ go() {
     # inhibits docker-compose run. I am worried that this will be ineffective
     # at stopping the containers
     # ^ XXX it actually doesn't enforce things properly for tut-7-rpc
+    timeoutpath=$(which timeout)
+    echo "THIS IS THE TIMEOUT PATH: ${timeoutpath}"
     timeout --foreground "${TIMEOUT}" ./one.sh run "${WHICH}"# >>"${THIS_ART}" 2>&1
     #cd ${WHICH}
     #../../reach compile

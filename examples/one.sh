@@ -1,5 +1,5 @@
 #!/bin/sh
-set -e
+#set -e
 set -x
 
 MODE="$1"
@@ -23,6 +23,7 @@ echo
   else
     case "$MODE" in
       build)
+        echo "ITS BUILDING!!!"
         ../../reach compile
         ;;
       run)

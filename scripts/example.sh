@@ -31,7 +31,7 @@ go() {
     # at stopping the containers
     # ^ XXX it actually doesn't enforce things properly for tut-7-rpc
     #timeout --foreground "${TIMEOUT}" ./one.sh run "${WHICH}"# >>"${THIS_ART}" 2>&1
-    ./one.sh run "${WHICH}"# >>"${THIS_ART}" 2>&1
+    ./one.sh run "${WHICH}" >> /tmp/log_${THIS_ART} 2>&1 # >>"${THIS_ART}" 2>&1
     #cd ${WHICH}
     #../../reach compile
     EXIT=$?

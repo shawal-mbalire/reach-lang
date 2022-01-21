@@ -14,7 +14,7 @@ case "${CONN}" in
   ETH) TIMEOUT=$((10 * 60)) ;;
 esac
 
-../reach devnet --await-background
+#../reach devnet --await-background
 
 cd ../examples || exit 1
 go() {

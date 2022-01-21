@@ -1,0 +1,50 @@
+version: "3"
+networks:
+  reach-devnet:
+    driver: bridge
+services:
+  devnet-cfx:
+    image:          reachsh/devnet-cfx:0.1.8
+    hostname:       reach-devnet-cfx
+    container_name: reach-devnet-cfx
+    networks:
+      - reach-devnet
+    ports:
+     - 12537
+  devnet-eth:
+    image:          reachsh/devnet-eth:0.1.8
+    hostname:       reach-devnet-eth
+    container_name: reach-devnet-eth
+    networks:
+      - reach-devnet
+    ports:
+     - 8545
+     - 8546
+  devnet-algo-pg:
+    image:          postgres:11-alpine
+    hostname:       reach-devnet-algo-pg
+    container_name: reach-devnet-algo-pg
+    networks:
+      - reach-devnet
+    environment:
+      - POSTGRES_USER=algogrand
+      - POSTGRES_PASSWORD=indexer
+      - POSTGRES_DB=pgdb
+  devnet-algo:
+    image:          reachsh/devnet-algo:0.1.8
+    hostname:       reach-devnet-algo
+    container_name: reach-devnet-algo
+    networks:
+      - reach-devnet
+    ports:
+     - 4180
+     - 8980
+     - 9392
+    depends_on:
+      - devnet-algo-pg
+    environment:
+      - REACH_DEBUG
+      - POSTGRES_HOST=reach-devnet-algo-pg
+      - POSTGRES_USER=algogrand
+      - POSTGRES_PASSWORD=indexer
+      - POSTGRES_DB=pgdb

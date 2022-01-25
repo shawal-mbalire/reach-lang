@@ -12,9 +12,10 @@ ARG BUILD_TAG
 ARG Z3_VERSION
 ENV Z3_VERSION=${Z3_VERSION}
 ENV BUILD_TAG=${BUILD_TAG}
-RUN echo "http://host.docker.internal:80${BUILD_TAG}/" >> /etc/apk/repositories
+ENV REPO_PORT=${REPO_PORT}
+RUN echo "http://host.docker.internal:80${REPO_PORT}/" >> /etc/apk/repositories
 RUN apk update --allow-untrusted && apk add libgmpxx ca-certificates git
-RUN apk add --allow-untrusted --repository="http://host.docker.internal:80${BUILD_TAG}/" z3="4.8.13-r0" z3-dev="4.8.13-r0"
+RUN apk add --allow-untrusted --repository="http://host.docker.internal:80${REPO_PORT}/" z3="4.8.13-r0" z3-dev="4.8.13-r0"
 RUN chmod +x /usr/bin/z3
 
 FROM alpine

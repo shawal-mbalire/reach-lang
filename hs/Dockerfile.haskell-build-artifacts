@@ -8,13 +8,13 @@ RUN make sol/stdlib.json
 FROM reachsh/devnet-algo:latest AS algo
 
 FROM alpine as z3
-ARG BUILD_ID
+ARG BUILD_TAG
 ARG Z3_VERSION
 ENV Z3_VERSION=${Z3_VERSION}
-ENV BUILD_ID=${BUILD_ID}
-RUN echo "http://host.docker.internal:80${BUILD_ID}/" >> /etc/apk/repositories
+ENV BUILD_TAG=${BUILD_TAG}
+RUN echo "http://host.docker.internal:80${BUILD_TAG}/" >> /etc/apk/repositories
 RUN apk update --allow-untrusted && apk add libgmpxx ca-certificates git
-RUN apk add --allow-untrusted --repository="http://host.docker.internal:80${BUILD_ID}/" z3="4.8.13-r0" z3-dev="4.8.13-r0"
+RUN apk add --allow-untrusted --repository="http://host.docker.internal:80${BUILD_TAG}/" z3="4.8.13-r0" z3-dev="4.8.13-r0"
 RUN chmod +x /usr/bin/z3
 
 FROM alpine

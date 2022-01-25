@@ -23,7 +23,7 @@ build-haskell-build-artifacts:
 	docker run --rm --name repo-${BUILD_ID} -p 80${BUILD_ID}:80 -d reachsh/repository:latest
 	$(ROOT)/scripts/build-image.sh $(IMG_HASKELL_BUILD_ARTIFACTS) Dockerfile.haskell-build-artifacts \
 	  --add-host host.docker.internal:172.17.0.1 --build-arg BUILD_ID=${BUILD_ID}
-	docker container rm -f repo
+	docker container rm -f repo-${BUILD_ID}
 
 .PHONY: build-reach-cli
 build-reach-cli:

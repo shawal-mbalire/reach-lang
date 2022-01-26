@@ -23,7 +23,7 @@ build-haskell-build-artifacts:
 #	docker image rm -f reachsh/repository:latest || true
 	docker run --rm --name repo-${BUILD_TAG} -p 80$(shell echo $(REPO_PORT)):80 -d reachsh/repository:latest
 	$(ROOT)/scripts/build-image.sh $(IMG_HASKELL_BUILD_ARTIFACTS) Dockerfile.haskell-build-artifacts \
-	  --add-host host.docker.internal:172.17.0.1 --build-arg BUILD_TAG=${BUILD_TAG} --build-arg REPO_PORT=$(REPO_PORT)
+	  --add-host host.docker.internal:172.17.0.1 --build-arg BUILD_TAG=${BUILD_TAG} --build-arg REPO_PORT=$(REPO_PORT)  --cpu-shares=512
 	docker container rm -f repo-${BUILD_TAG}
 
 .PHONY: build-reach-cli

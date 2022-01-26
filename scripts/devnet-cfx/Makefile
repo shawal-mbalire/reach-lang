@@ -4,7 +4,7 @@ include $(ROOT)/DEPS
 
 .PHONY: build
 build:
-	$(ROOT)/scripts/build-image.sh $(IMAGE) Dockerfile
+	$(ROOT)/scripts/build-image.sh $(IMAGE) Dockerfile  --cpu-shares=512
 	TAG_ONLY=1 $(ROOT)/scripts/docker-push.sh $(IMAGE)
 
 .PHONY: build-m1

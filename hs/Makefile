@@ -14,14 +14,14 @@ expand: package.yaml src/Reach/Version.hs sol/stdlib.sol
 clean: hs-clean
 	rm -f package.yaml
 
-REPO_PORT = $$((10 + $$RANDOM % 80))
+REPO_PORT = $$((12 + $$RANDOM % 82))
 .PHONY: build-haskell-build-artifacts
 build-haskell-build-artifacts:
 	mkdir -p .docker-root
 	cp -f $(ROOT)/VERSION $(ROOT)/DEPS .docker-root/
 	docker container rm -f repo || true
 	docker image rm -f reachsh/repository:latest || true
-	docker run --rm --name repo-${BUILD_TAG} -p 80$(REPO_PORT):80 -d reachsh/repository:latest
+	docker run --rm --name repo-${BUILD_TAG} -p 80$(shell echo $(REPO_PORT)):80 -d reachsh/repository:latest
 	$(ROOT)/scripts/build-image.sh $(IMG_HASKELL_BUILD_ARTIFACTS) Dockerfile.haskell-build-artifacts \
 	  --add-host host.docker.internal:172.17.0.1 --build-arg BUILD_TAG=${BUILD_TAG} --build-arg REPO_PORT=$(REPO_PORT)
 	docker container rm -f repo-${BUILD_TAG}

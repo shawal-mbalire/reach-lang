@@ -10,6 +10,8 @@ HERE="$(dirname "$(realpath "${0}")")";
 # shellcheck source=../VERSION
 . "${HERE}/../VERSION"
 
+echo "VERSION ${VERSION}"
+
 echo '{'
 
 DATE="$(TZ=Z date +%FT%TZ)"
@@ -26,7 +28,7 @@ echo '    "json": "is hard"'
 for CONTAINER in reach stdlib runner ethereum-devnet devnet-eth algorand-devnet devnet-algo devnet-cfx ; do
 
   echo ",   \"$CONTAINER\":"
-  curl -s "https://hub.docker.com/v2/repositories/reachsh/$CONTAINER/tags/" | \
+  curl -s "https://hub.docker.com/v2/repositories/reachsh/$CONTAINER/tags/?page_size=300" | \
     jq ".results | map(select(.name == \"$VERSION\") | {name: .name, who: .last_updater_username, when: .last_updated})"
 
 done

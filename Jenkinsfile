@@ -6,6 +6,9 @@ pipeline {
       label 'reach'
     }
   }
+  environment {
+    RANDOM = Math.abs(new Random().nextInt(25000))
+  }
   stages {
     stage('Build Haskell and Devnet Docker Images') {
       parallel {

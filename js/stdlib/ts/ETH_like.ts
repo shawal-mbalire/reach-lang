@@ -558,6 +558,8 @@ const connectAccount = async (networkAccount: NetworkAccount): Promise<Account> 
         const ethersC = await getC();
         const mf = `_reachMap${i}Ref`;
         debug(dhead, mf);
+        debug(dhead, ethersC);
+        debug(dhead, ethersC[mf]);
         const mfv = await ethersC[mf](f);
         debug(dhead, { mfv });
         const res = ty.unmunge(mfv);
@@ -888,8 +890,8 @@ const connectAccount = async (networkAccount: NetworkAccount): Promise<Account> 
     return md;
   };
 
-  const accObj = { networkAccount, getAddress: selfAddress, stdlib, setDebugLabel, 
-                   tokenAccepted, tokenAccept, tokenMetadata, contract, setGasLimit, 
+  const accObj = { networkAccount, getAddress: selfAddress, stdlib, setDebugLabel,
+                   tokenAccepted, tokenAccept, tokenMetadata, contract, setGasLimit,
                    getGasLimit, setStorageLimit, getStorageLimit };
   const acc = accObj as unknown as Account;
   const balanceOf_ = (token?: Token): Promise<BigNumber> => balanceOf(acc, token);

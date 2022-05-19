@@ -439,7 +439,19 @@ jsExpr = \case
         jsArg what
   DLE_MapRef _ mpv fa -> do
     let ctc = jsMapVarCtc mpv
-    fa' <- jsArg fa
+    -- fa' <- jsArg fa
+    let baseTypes = [ T_Null
+                    , T_Bool
+                    , T_UInt UI_Word
+                    , T_UInt UI_256
+                    , T_Digest
+                    , T_Address
+                    , T_Contract
+                    , T_Token
+                    ]
+    fa' <- case argTypeOf fa `elem` baseTypes of
+              True  -> jsArg fa
+              False -> jsDigest [fa]
     (f, args) <-
       (ctxt_mode <$> ask) >>= \case
         JM_Simulate -> return $ ("await stdlib.simMapRef", ["sim_r", jsMapIdx mpv])

@@ -17,9 +17,13 @@ const make = ({ metaNameLen, metaSymbolLen, metaTokenURILen }) => Reach.App(() =
       // XXX these should all be `string` per spec
       name: Bytes(metaNameLen),
       symbol: Bytes(metaSymbolLen),
-      tokenURI: Bytes(metaTokenURILen)
+      tokenURI: Bytes(metaTokenURILen),
+    }),
+    enum: Object({
+      totalSupply: UInt
     }),
     zeroAddr: Address,
+    deployed: Fun([Contract], Null),
   });
 
   const metaViews = {
@@ -28,12 +32,17 @@ const make = ({ metaNameLen, metaSymbolLen, metaTokenURILen }) => Reach.App(() =
     tokenURI: Fun([UInt], Bytes(metaTokenURILen))
   }
 
+  const enumViews = {
+    totalSupply: UInt,
+  }
+
   const V = View({
     balanceOf: Fun([Address], UInt),
     getApproved: Fun([UInt], Address),
     isApprovedForAll: Fun([Address, Address], Bool),
     ownerOf: Fun([UInt], Address),
     ...metaViews,
+    ...enumViews,
   });
 
   const I = API({
@@ -41,6 +50,8 @@ const make = ({ metaNameLen, metaSymbolLen, metaTokenURILen }) => Reach.App(() =
     safeTransferFrom: Fun([Address, Address, UInt], Null),
     setApprovalForAll: Fun([Address, Bool], Null),
     transferFrom: Fun([Address, Address, UInt], Null),
+    mint: Fun([Address, UInt], Null),
+    burn: Fun([UInt], Null),
   });
 
   const E = Events({
@@ -53,12 +64,16 @@ const make = ({ metaNameLen, metaSymbolLen, metaTokenURILen }) => Reach.App(() =
 
   D.only(() => {
     const { name, symbol, tokenURI } = declassify(interact.meta);
+    const { totalSupply } = declassify(interact.enum);
     const zeroAddr = declassify(interact.zeroAddr);
   })
-  D.publish(name, symbol, tokenURI, zeroAddr);
+  D.publish(name, symbol, tokenURI, totalSupply, zeroAddr);
+
+  D.interact.deployed(getContract());
 
   V.name.set(name);
   V.symbol.set(symbol);
+  V.totalSupply.set(totalSupply);
 
   const owners = new Map(UInt, Address);
   const balances = new Map(UInt);
@@ -68,6 +83,12 @@ const make = ({ metaNameLen, metaSymbolLen, metaTokenURILen }) => Reach.App(() =
   const [ ] =
     parallelReduce([ ])
       .define(() => {
+
+        const modAt = (dict, key, f) => {
+          const value = dict[key];
+          fromMaybe(value, () => {}, (x) => { dict[key] = f(x); });
+        }
+
         V.balanceOf.set((owner) => {
           check(owner != zeroAddr, "ERC721::balanceOf: Address zero is not a valid owner");
           const m_bal = balances[owner];
@@ -170,10 +191,32 @@ const make = ({ metaNameLen, metaSymbolLen, metaTokenURILen }) => Reach.App(() =
           return [ ];
         }];
       })
+      .api_(I.mint, (to, tokenId) => {
+        check(to != zeroAddr, "Cannot mint to zero address");
+        check(!tokenExists(tokenId), "Token already exists");
+        return [ (k) => {
+          modAt(balances, to, (x) => x + 1);
+          owners[tokenId] = to;
+          E.Transfer(zeroAddr, to, tokenId);
+          k(null);
+          return [ ];
+        }];
+      })
+      .api_(I.burn, (tokenId) => {
+        const owner = ownerOf(tokenId);
+        return [ (k) => {
+          approve(zeroAddr, tokenId);
+          modAt(balances, owner, (x) => x - 1);
+          delete owners[tokenId];
+          E.Transfer(owner, zeroAddr, tokenId);
+          k(null);
+          return [ ];
+        }];
+      })
       .timeout(false);
 
   commit();
 
 });
 
-export const erc721 = make({ ...defaultOptions });
+export const main = make({ ...defaultOptions });

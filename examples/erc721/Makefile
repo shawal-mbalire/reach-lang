@@ -1,0 +1,5 @@
+run-test:
+	REACH_DOCKER=0 REACH_CONNECTOR_MODE=ETH ./reach run -- testnet
+
+run:
+	REACH_DOCKER=0 REACH_CONNECTOR_MODE=ETH reach run

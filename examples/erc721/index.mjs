@@ -55,14 +55,14 @@ await Promise.all([
     deployed: (ctcAddr) => {
       console.log(`Contract deployed @: `, stdlib.formatAddress(ctcAddr));
       ready.notify();
-    }
+    },
+    log: console.log
   }),
   thread(async () => {
     await ready.wait();
     console.log(`Contract is ready for interaction`);
 
-    const accA = await getAccount();
-    accA.setGasLimit(5000000);
+    const accA = acc;
     const ctcA = await accA.contract(backend, ctc.getInfo());
     const I = ctcA.a;
     const V = ctcA.v;

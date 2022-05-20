@@ -24,6 +24,7 @@ const make = ({ metaNameLen, metaSymbolLen, metaTokenURILen }) => Reach.App(() =
     }),
     zeroAddr: Address,
     deployed: Fun([Contract], Null),
+    log: Fun(true, Null),
   });
 
   const metaViews = {
@@ -41,6 +42,7 @@ const make = ({ metaNameLen, metaSymbolLen, metaTokenURILen }) => Reach.App(() =
     getApproved: Fun([UInt], Address),
     isApprovedForAll: Fun([Address, Address], Bool),
     ownerOf: Fun([UInt], Address),
+    supportsInterface: Fun([Bytes(4)], Bool),
     ...metaViews,
     ...enumViews,
   });
@@ -74,6 +76,7 @@ const make = ({ metaNameLen, metaSymbolLen, metaTokenURILen }) => Reach.App(() =
   V.name.set(name);
   V.symbol.set(symbol);
   V.totalSupply.set(totalSupply);
+  V.supportsInterface.set((id) => true);
 
   const owners = new Map(UInt, Address);
   const balances = new Map(UInt);

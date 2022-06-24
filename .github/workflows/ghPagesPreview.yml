@@ -11,9 +11,9 @@ on:
 
 concurrency: preview-${{ github.ref }}
 
-env:
-  ALGOLIA_KEY: ${{ secrets.ALGOLIA_KEY }}
-  GITHUB_GRAPHQL_KEY: ${{ secrets.GRAPHQL_KEY }}
+# env:
+#   ALGOLIA_KEY: ${{ secrets.ALGOLIA_KEY }}
+#   GITHUB_GRAPHQL_KEY: ${{ secrets.GRAPHQL_KEY }}
 
 jobs:
   deploy-preview:
@@ -30,9 +30,9 @@ jobs:
           cp -fr docs/build /tmp/workspace/docs
           cp -f docs/search/index.json /tmp/workspace/search
 
-      - run: |
-          cp /tmp/workspace/search/* ./docs/search/
-          (cd docs && make update-search)
+      # - run: |
+      #     cp /tmp/workspace/search/* ./docs/search/
+      #     (cd docs && make update-search)
 
       - name: Deploy preview
         uses: rossjrw/pr-preview-action@v1

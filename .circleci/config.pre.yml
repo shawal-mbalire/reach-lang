@@ -125,8 +125,13 @@ jobs:
           - search
     - slack_fail
   "docs-deploy":
+    # This is the base environment that Circle will use
+    # docker:
+    #   - image: circleci/python:3.6-stretch
     executor: fake
     steps:
+    # Get our data and merge with upstream
+    - run: sudo apt-get update
     - checkout
     - workattach
     - srd_no
@@ -150,6 +155,31 @@ jobs:
         # https://stackoverflow.com/questions/8123674/how-to-git-commit-nothing-without-an-error
         git diff-index --quiet HEAD || (git commit -m "[ci skip] docs for ${CIRCLE_SHA1}" && touch .did_change)
         git push origin gh-pages
+        build_docs:
+    # Update our path
+    - run: echo "export PATH=~/.local/bin:$PATH" >> $BASH_ENV
+    # Restore cached files to speed things up
+    # - restore_cache:
+    #     keys:
+    #       - cache-pip
+    # Install the packages needed to build our documentation
+    # This will depend on your particular package!
+    - run: pip install --user sphinx_rtd_theme sphinx pytest memory_profiler recommonmark sphinx_copybutton jupyterhub
+    # Cache some files for a speedup in subsequent builds
+    - save_cache:
+        key: cache-pip
+        paths:
+          - ~/.cache/pip
+    # Build the docs
+    - run:
+        name: Build docs to store
+        command: |
+          cd docs
+          make build
+    # Tell Circle to store the documentation output in a folder that we can access later
+    - store_artifacts:
+        path: docs/build/html/
+        destination: html
     - slack_fail
     - run: |
         if [ -f .did_change ]; then

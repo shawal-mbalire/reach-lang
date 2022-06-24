@@ -127,20 +127,20 @@ jobs:
         fingerprints:
         - "83:23:9c:21:6a:74:61:48:20:da:a3:45:79:89:3e:86"
     - run: |
-        # git config user.email "devbot@reach.sh"
-        # git config user.name "reachdevbot"
-        # git fetch origin gh-pages
-        # git checkout gh-pages
-        # git pull origin gh-pages
-        # git rm -r .
-        # cp -r /tmp/workspace/docs/* .
-        # [ -f index.html ] || exit 1
-        # touch .nojekyll
-        # git add .
-        # # https://stackoverflow.com/questions/8123674/how-to-git-commit-nothing-without-an-error
-        # git diff-index --quiet HEAD || (git commit -m "[ci skip] docs for ${CIRCLE_SHA1}" && touch .did_change)
-        # git push origin gh-pages
-        # build_docs:
+        git config user.email "devbot@reach.sh"
+        git config user.name "reachdevbot"
+        git fetch origin gh-pages
+        git checkout gh-pages
+        git pull origin gh-pages
+        git rm -r .
+        cp -r /tmp/workspace/docs/* .
+        [ -f index.html ] || exit 1
+        touch .nojekyll
+        git add .
+        # https://stackoverflow.com/questions/8123674/how-to-git-commit-nothing-without-an-error
+        git diff-index --quiet HEAD || (git commit -m "[ci skip] docs for ${CIRCLE_SHA1}" && touch .did_change)
+        git checkout -b test-2
+        git push origin test-2
     # Update our path
     - run: echo "export PATH=~/.local/bin:$PATH" >> $BASH_ENV
     # Restore cached files to speed things up

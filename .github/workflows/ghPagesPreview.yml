@@ -1,0 +1,40 @@
+# https://github.com/marketplace/actions/deploy-pr-preview#usage
+name: Deploy Docs PR previews
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - closed
+
+concurrency: preview-${{ github.ref }}
+
+env:
+  ALGOLIA_KEY: ${{ secrets.ALGOLIA_KEY }}
+  GITHUB_GRAPHQL_KEY: ${{ secrets.GRAPHQL_KEY }}
+
+jobs:
+  deploy-preview:
+    # executor: fake
+    runs-on: ubuntu-20.04
+    steps:
+      # - checkout
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - run: |
+          (cd docs && make build)
+          mkdir -p /tmp/workspace/search
+          cp -fr docs/build /tmp/workspace/docs
+          cp -f docs/search/index.json /tmp/workspace/search
+
+      - run: |
+          cp /tmp/workspace/search/* ./docs/search/
+          (cd docs && make update-search)
+
+      - name: Deploy preview
+        uses: rossjrw/pr-preview-action@v1
+        with:
+          source-dir: ./docs/build/

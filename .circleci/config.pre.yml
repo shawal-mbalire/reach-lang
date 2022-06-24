@@ -163,8 +163,7 @@ jobs:
           make build
     # Tell Circle to store the documentation output in a folder that we can access later
     - store_artifacts:
-        path: docs/build/html/
-        destination: html
+        path: docs/build/
     - run: |
         if [ -f .did_change ]; then
           git diff --exit-code HEAD~ changelog/index.md

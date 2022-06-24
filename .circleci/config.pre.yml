@@ -320,9 +320,6 @@ workflows:
     jobs:
     - "docs-render"
     - "docs-deploy":
-       filters:
-         branches:
-           only: master
        requires:
        - "docs-render"
   build:

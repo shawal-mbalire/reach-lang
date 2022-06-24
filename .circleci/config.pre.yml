@@ -2,7 +2,6 @@ version: 2.1
 orbs:
   jq: "circleci/jq@2.2.0"
   shellcheck: "circleci/shellcheck@2.2.0"
-  slack: "circleci/slack@4.3.3"
 
 executors:
   fake:
@@ -32,19 +31,6 @@ commands:
     steps:
       - attach_workspace:
           at: /tmp/workspace
-  slack_fail:
-    steps:
-      - slack/notify:
-          # NOTE: We used to do
-          # branch_pattern: "master,gh-pages"
-          # But, I am disabling it on purpose
-          event: fail
-          custom: |
-            { "blocks": [
-                { "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "*FAIL* ${CIRCLE_USERNAME}/<https://github.com/reach-sh/reach-lang/tree/${CIRCLE_BRANCH}|${CIRCLE_BRANCH}>${CIRCLE_PULL_REQUEST:+/<$CIRCLE_PULL_REQUEST|PR>} > ${CIRCLE_JOB} <${CIRCLE_BUILD_URL}|more...>" }}]}
   srd_yes:
     steps:
       - setup_remote_docker:
@@ -123,7 +109,6 @@ jobs:
         paths:
           - docs
           - search
-    - slack_fail
   "docs-deploy":
     # This is the base environment that Circle will use
     # docker:
@@ -180,25 +165,10 @@ jobs:
     - store_artifacts:
         path: docs/build/html/
         destination: html
-    - slack_fail
     - run: |
         if [ -f .did_change ]; then
           git diff --exit-code HEAD~ changelog/index.md
         fi
-    - slack/notify:
-        event: fail
-        channel: 'CMY2TF38D' # general
-        # (CMY3E5B3J = reach-lang)
-        custom: |
-          {
-            "blocks": [{
-              "type": "section",
-              "text": {
-                "type": "mrkdwn",
-                "text": "<https://docs.reach.sh/changelog/|Changelog> has changed!"
-              }
-            }]
-          }
   "sh-check":
     executor: fake
     steps:
@@ -206,7 +176,6 @@ jobs:
     - shellcheck/install
     - run: |
         make sh-lint
-    - slack_fail
   "hs-test":
     executor: real
     steps:
@@ -233,7 +202,6 @@ jobs:
         paths:
           - hs-test.xml
           - hs-test-url
-    - slack_fail
   "build-image":
     parameters:
       image:
@@ -262,7 +230,6 @@ jobs:
         IMAGE="<<parameters.image>>"
         cd .circleci && ./image.sh "${IMAGE}"
         "${ROOT}/scripts/cache-image.sh" "${IMAGE}"
-    - slack_fail
   "examples":
     parameters:
       connector:
@@ -303,16 +270,6 @@ jobs:
         paths:
           - artifacts
           - record
-    # This should only notify if something goes fatally wrong.
-    # Regular test failures go through to the sink.
-    - slack/notify:
-        event: fail
-        custom: |
-          { "blocks": [
-              { "type": "section",
-                "text": {
-                  "type": "mrkdwn",
-                  "text": "*CATASTROPHIC* ${CIRCLE_USERNAME}/<https://github.com/reach-sh/reach-lang/tree/${CIRCLE_BRANCH}|${CIRCLE_BRANCH}>${CIRCLE_PULL_REQUEST:+/<$CIRCLE_PULL_REQUEST|PR>} > examples.<<parameters.connector>> <${CIRCLE_BUILD_URL}|more...>" }}]}
   "build-sink":
     executor: fake
     steps:
@@ -324,17 +281,6 @@ jobs:
         when: always
         command: |
           echo "${RECORD_MESSAGE}"
-    - slack/notify:
-        event: always
-        # NOTE: We used to do
-        # branch_pattern: "master,gh-pages"
-        # But, I am disabling it on purpose
-        custom: |
-          { "blocks": [
-              { "type": "section",
-                "text": {
-                  "type": "mrkdwn",
-                  "text": "${RECORD_MESSAGE}" }}]}
   "browser-tests":
     executor: real
     parameters:
@@ -368,7 +314,6 @@ jobs:
         path: js/browser-tests/cypress/videos
     - store_artifacts:
         path: js/browser-tests/cypress/screenshots
-    - slack_fail
 
 workflows:
   docs:
